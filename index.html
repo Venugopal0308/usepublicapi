@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fetch Users</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    #userContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .user-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .error {
+      color: red;
+    }
+
+    #reloadBtn {
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #reloadBtn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>User Information</h1>
+  <button id="reloadBtn">Reload Users</button>
+  <div id="userContainer">Loading users...</div>
+
+  <script>
+    const userContainer = document.getElementById('userContainer');
+    const reloadBtn = document.getElementById('reloadBtn');
+
+    function fetchUserData() {
+      userContainer.innerHTML = 'Loading users...';
+
+      fetch('https://jsonplaceholder.typicode.com/users')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch users');
+          }
+          return response.json();
+        })
+        .then(users => {
+          userContainer.innerHTML = '';
+          users.forEach(user => {
+            const userDiv = document.createElement('div');
+            userDiv.className = 'user-card';
+            userDiv.innerHTML = `
+              <strong>Name:</strong> ${user.name}<br>
+              <strong>Email:</strong> ${user.email}<br>
+              <strong>Address:</strong> ${user.address.street}, ${user.address.city}
+            `;
+            userContainer.appendChild(userDiv);
+          });
+        })
+        .catch(error => {
+          userContainer.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        });
+    }
+
+    reloadBtn.addEventListener('click', fetchUserData);
+
+    // Fetch on page load
+    fetchUserData();
+  </script>
+
+</body>
+</html>
